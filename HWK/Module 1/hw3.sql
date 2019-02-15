@@ -43,7 +43,7 @@ WITH top_rated as
 	FROM
 	ratings
 	GROUP BY ratings.movieId
-	HAVING COUNT (userId) > 50 -- CHECK
+	HAVING COUNT (userId) > 50
 	ORDER BY avg_rating DESC, movieId ASC
 	LIMIT 150
 	)
@@ -66,7 +66,7 @@ WITH top_rated as
 	FROM
 	ratings
 	GROUP BY ratings.movieId
-	HAVING COUNT (userId) > 50 -- CHECK
+	HAVING COUNT (userId) > 50
 	ORDER BY avg_rating DESC, movieId ASC
 	LIMIT 150
 	)
