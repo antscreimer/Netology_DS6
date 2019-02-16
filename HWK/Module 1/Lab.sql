@@ -83,6 +83,6 @@ MIN(num_public) OVER (PARTITION BY department.name) as min_public
 FROM
 department
 LEFT JOIN employee
-ON department.id = employee.department_id
-GROUP BY department.id, department.name;
+ON department.id = employee.department_id;
+--GROUP BY department.id, department.name;
 --HAVING min_public;
