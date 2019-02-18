@@ -78,11 +78,16 @@ AS
  WHERE sum_public = (SELECT MAX(sum_public) FROM temp_table);
  
  --2.d
-SELECT department.id, department.name, employee.name,
-MIN(num_public) OVER (PARTITION BY department.name) as min_public
-FROM
-department
+WITH temp_table
+AS
+(
+SELECT department_id, department.name, employee.name,
+MIN(num_public) OVER (PARTITION BY employee.department_id) as min_public, num_public
+FROM department
 LEFT JOIN employee
-ON department.id = employee.department_id;
---GROUP BY department.id, department.name;
---HAVING min_public;
+ON department.id = employee.department_id
+ORDER BY department_id
+)
+SELECT * FROM 
+temp_table
+WHERE num_public = min_public;
