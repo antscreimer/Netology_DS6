@@ -1,10 +1,22 @@
 CREATE TABLE wagon_repair (
-  repair_id INTEGER PRIMARY KEY,
+  repair_id INTEGER,
   wagon_id INTEGER,
+  numb INTEGER,
+  detail_id INTEGER,
+  detail_number INTEGER,
   depot_id INTEGER,
   repair_type VARCHAR(100),
-  cost numeric(8,2)
+  price numeric(8,2)
   );
+
+INSERT INTO wagon_repair VALUES
+('1', '1', '1o', '1', 2, '1', 'замена', 80000),
+('2', '1', '2o', '2', 1, '1', 'замена', 10000),
+('3', '1', '3o', '1', 1, '2', 'замена', 40000),
+('4', '1', '3o', '3', 1, '2', 'замена', 20000),
+('5', '1', '4o', '4', 2, '2', 'замена', 30000),
+('6', '1', '5o', '3', 3, '3', 'замена', 60000),
+('7', '1', '5o', '1', 2, '3', 'замена', 80000),
   
 CREATE TABLE wagon (
   wagon_id INTEGER PRIMARY KEY,
