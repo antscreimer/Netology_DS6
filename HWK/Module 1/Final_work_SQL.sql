@@ -24,11 +24,26 @@ INSERT INTO detail VALUES
 ('3', 'side frame'), -- боковая рама
 ('4', 'coupler'); -- тяговый хомут
 
+-- Создание справочника депо
+
+CREATE TABLE depot_name (
+  ID INTEGER PRIMARY KEY,
+  depot_name VARCHAR (100)
+);
+
+INSERT INTO depot_name VALUES
+('1', 'central_depot'),
+('2', 'north_depot'),
+('3', 'south_depot'),
+('4', 'east_depot'),
+('5', 'west_depot'),
+('6', 'reserve_depot');
+
 -- Создание таблицы депо
 
 CREATE TABLE depot (
   ID INTEGER,
-  depot_id INTEGER PRIMARY KEY,
+  depot_id INTEGER REFERENCES depot_name(id),
   detail_id INTEGER REFERENCES detail(detail_id),
   detail_quantity INTEGER
  );
@@ -62,7 +77,7 @@ CREATE TABLE wagon_repair (
   numb VARCHAR(10),
   detail_id INTEGER REFERENCES detail(detail_id),
   detail_number INTEGER,
-  depot_id INTEGER REFERENCES depot(depot_id),
+  depot_id INTEGER REFERENCES depot_name(id),
   repair_type VARCHAR(100),
   price numeric
   );
