@@ -115,3 +115,20 @@ INSERT INTO wagon_repair VALUES
 ('30', '4', '6t', '2', 2, '6', 'покупка', 40000),
 ('31', '4', '7t', '1', 1, '6', 'покупка', 80000),
 ('32', '4', '7t', '2', 2, '6', 'замена', 20000);
+
+--****************************************************
+
+--Вывести номера, тип вагонов и тип деталей, требующих покупку деталей
+SELECT 
+wagon_repair.numb as wagon_number, 
+wagon.wagon_type as wagon_type, 
+wagon_repair.repair_type as wagon_repair_type,
+detail.detail_name as detail_name
+FROM wagon_repair
+LEFT JOIN wagon
+ON wagon_repair.wagon_id = wagon.wagon_id
+LEFT JOIN detail
+ON wagon_repair.detail_id = detail.detail_id
+WHERE wagon_repair.repair_type = 'покупка';
+
+--
