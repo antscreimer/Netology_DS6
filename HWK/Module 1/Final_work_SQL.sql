@@ -77,7 +77,7 @@ CREATE TABLE wagon_repair (
   wagon_id INTEGER REFERENCES wagon(wagon_id),
   numb VARCHAR(10),
   detail_id INTEGER REFERENCES detail(detail_id),
-  detail_number INTEGER,
+  detail_quantity INTEGER,
   depot_id INTEGER REFERENCES depot_name(id),
   repair_type VARCHAR(100),
   price numeric
