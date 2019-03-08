@@ -65,9 +65,10 @@ INSERT INTO depot_detail VALUES
 ('14', 5, 2, 15),
 ('15', 5, 3, 8),
 ('16', 5, 4, 11), 
-('17', 6, 2, 19),
-('18', 6, 3, 15),
-('19', 6, 4, 14);
+('17', 6, 1, 30),
+('18', 6, 2, 20),
+('19', 6, 3, 30),
+('19', 6, 4, 20);
 
 -- Создание таблицы ремонтов
 
@@ -151,3 +152,28 @@ JOIN depot_name ON wagon_repair.depot_id = depot_name.id
 GROUP BY depot_id, depot_name
 
 ORDER BY facture_amount ASC;
+
+-- Вывести депо или список депо (если больше 1), 
+-- у которых больше количества деталей на складе
+
+WITH temp_table AS (
+  
+  SELECT 
+  depot_detail.depot_id as depot_id,
+  depot_name.depot_name as depot_name,
+  SUM(detail_quantity) as total_detail_quantity
+  
+  FROM depot_detail
+  
+  JOIN depot_name ON depot_detail.depot_id = depot_name.id
+  
+  GROUP BY depot_id, depot_name
+  
+  ORDER BY total_detail_quantity DESC
+)
+
+SELECT * FROM temp_table
+
+WHERE total_detail_quantity = (
+  
+  SELECT MAX(total_detail_quantity) FROM temp_table);
