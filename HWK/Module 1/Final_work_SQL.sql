@@ -177,3 +177,28 @@ SELECT * FROM temp_table
 WHERE total_detail_quantity = (
   
   SELECT MAX(total_detail_quantity) FROM temp_table);
+
+-- Вывести сумму ремонта за каждый номерной вагон (Вывести также тип вагона)
+
+WITH temp_table AS (
+  
+  SELECT
+ 
+    wagon_repair.wagon_id as wagon_id,
+    wagon_repair.numb as number,
+    SUM(price) as wagon_repair_price
+
+FROM wagon_repair
+
+GROUP BY wagon_repair.wagon_id, wagon_repair.numb
+)
+SELECT
+
+temp_table.wagon_id,
+number,
+wagon_repair_price,
+wagon.wagon_type
+
+FROM temp_table
+
+LEFT JOIN wagon ON temp_table.wagon_id = wagon.wagon_id;
