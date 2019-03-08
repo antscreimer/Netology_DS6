@@ -41,14 +41,14 @@ INSERT INTO depot_name VALUES
 
 -- Создание таблицы депо
 
-CREATE TABLE depot (
+CREATE TABLE depot_detail (
   ID INTEGER,
   depot_id INTEGER REFERENCES depot_name(id),
   detail_id INTEGER REFERENCES detail(detail_id),
   detail_quantity INTEGER
  );
 
-INSERT INTO depot VALUES
+INSERT INTO depot_detail VALUES
 ('1', 1, 1, 20),
 ('2', 1, 2, 40),
 ('3', 1, 3, 25),
@@ -116,19 +116,38 @@ INSERT INTO wagon_repair VALUES
 ('31', '4', '7t', '1', 1, '6', 'покупка', 80000),
 ('32', '4', '7t', '2', 2, '6', 'замена', 20000);
 
---****************************************************
+--**********************************************
 
 --Вывести номера, тип вагонов и тип деталей, требующих покупку деталей
-SELECT 
-wagon_repair.numb as wagon_number, 
-wagon.wagon_type as wagon_type, 
-wagon_repair.repair_type as wagon_repair_type,
-detail.detail_name as detail_name
+
+SELECT DISTINCT
+
+	wagon_repair.numb as wagon_number, 
+	wagon.wagon_type as wagon_type, 
+	wagon_repair.repair_type as wagon_repair_type,
+	detail.detail_name as detail_name
+    
 FROM wagon_repair
-LEFT JOIN wagon
-ON wagon_repair.wagon_id = wagon.wagon_id
-LEFT JOIN detail
-ON wagon_repair.detail_id = detail.detail_id
+
+LEFT JOIN wagon ON wagon_repair.wagon_id = wagon.wagon_id
+
+LEFT JOIN detail ON wagon_repair.detail_id = detail.detail_id
+
 WHERE wagon_repair.repair_type = 'покупка';
 
---
+-- Вывести сумма счета, который выставит каждый депо в рамках ремонта 
+-- вагонов. Упорядочить по возрастанию
+
+SELECT
+
+	wagon_repair.depot_id as depot_id, 
+	depot_name.depot_name as depot_name,
+	SUM(wagon_repair.price) as facture_amount
+    
+FROM wagon_repair
+
+JOIN depot_name ON wagon_repair.depot_id = depot_name.id
+
+GROUP BY depot_id, depot_name
+
+ORDER BY facture_amount ASC;
