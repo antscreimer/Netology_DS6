@@ -202,3 +202,44 @@ wagon.wagon_type
 FROM temp_table
 
 LEFT JOIN wagon ON temp_table.wagon_id = wagon.wagon_id;
+
+-- Вывести сумму затрат на ремонт по типу вагона
+
+SELECT 
+
+wagon_repair.wagon_id as wagon_id,
+wagon.wagon_type,
+SUM(price) as price_by_wagon_type
+
+FROM wagon_repair
+
+JOIN wagon ON wagon_repair.wagon_id = wagon.wagon_id
+
+GROUP BY wagon_repair.wagon_id, wagon.wagon_type
+
+ORDER BY price_by_wagon_type DESC;
+
+-- Вывести список деталей с минимальным количеством в рамках депо
+
+WITH temp_table AS (
+  
+  SELECT 
+  
+  depot_detail.depot_id,
+  depot_name.depot_name,
+  depot_detail.detail_id,
+  detail.detail_name,
+  MIN(detail_quantity) OVER (PARTITION BY depot_detail.depot_id) as    min_detail_qty,
+  depot_detail.detail_quantity
+  
+  FROM depot_detail
+  
+  JOIN depot_name ON depot_detail.depot_id = depot_name.id
+  
+  JOIN detail ON detail.detail_id = depot_detail.detail_id
+  
+)
+ 
+ SELECT * FROM temp_table
+ 
+ WHERE min_detail_qty = detail_quantity;
