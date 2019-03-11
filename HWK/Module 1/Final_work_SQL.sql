@@ -243,3 +243,28 @@ WITH temp_table AS (
  SELECT * FROM temp_table
  
  WHERE min_detail_qty = detail_quantity;
+ 
+-- Вывести остаток деталей в депо по итогам выполнения всех ремонтов
+-- Условимся, что при замене, старая деталь не считается как актив депо
+
+WITH temp_table AS (
+
+SELECT 
+
+depot_detail.depot_id,
+depot_name.depot_name,
+SUM(detail_quantity) as detail_total
+
+FROM depot_detail
+
+JOIN depot_name ON depot_detail.depot_id = depot_name.id
+
+GROUP BY depot_detail.depot_id, depot_name.depot_name
+
+ORDER BY depot_id
+  
+)
+SELECT 
+
+depot_detail.depot_id,
+depot_name.depot_name,
