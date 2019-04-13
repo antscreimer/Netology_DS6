@@ -119,7 +119,7 @@ INSERT INTO wagon_repair VALUES
 
 --**********************************************
 
---Вывести номера, тип вагонов и тип деталей, требующих покупку деталей
+--1 Вывести номера, тип вагонов и тип деталей, требующих покупку деталей
 
 SELECT DISTINCT
 
@@ -136,7 +136,7 @@ LEFT JOIN detail ON wagon_repair.detail_id = detail.detail_id
 
 WHERE wagon_repair.repair_type = 'покупка';
 
--- Вывести сумма счета, который выставит каждый депо в рамках ремонта 
+-- 2 Вывести сумма счета, который выставит каждый депо в рамках ремонта 
 -- вагонов. Упорядочить по возрастанию
 
 SELECT
@@ -153,7 +153,7 @@ GROUP BY depot_id, depot_name
 
 ORDER BY facture_amount ASC;
 
--- Вывести депо или список депо (если больше 1), 
+-- 3 Вывести депо или список депо (если больше 1), 
 -- у которых больше количества деталей на складе
 
 WITH temp_table AS (
@@ -178,7 +178,7 @@ WHERE total_detail_quantity = (
   
   SELECT MAX(total_detail_quantity) FROM temp_table);
 
--- Вывести сумму ремонта за каждый номерной вагон (Вывести также тип вагона)
+-- 4 Вывести сумму ремонта за каждый номерной вагон (Вывести также тип вагона)
 
 WITH temp_table AS (
   
@@ -203,7 +203,7 @@ FROM temp_table
 
 LEFT JOIN wagon ON temp_table.wagon_id = wagon.wagon_id;
 
--- Вывести сумму затрат на ремонт по типу вагона
+-- 5 Вывести сумму затрат на ремонт по типу вагона
 
 SELECT 
 
@@ -219,7 +219,7 @@ GROUP BY wagon_repair.wagon_id, wagon.wagon_type
 
 ORDER BY price_by_wagon_type DESC;
 
--- Вывести список деталей с минимальным количеством в рамках депо
+-- 6 Вывести список деталей с минимальным количеством в рамках депо
 
 WITH temp_table AS (
   
@@ -244,10 +244,7 @@ WITH temp_table AS (
  
  WHERE min_detail_qty = detail_quantity;
  
--- Вывести остаток деталей в депо по итогам выполнения всех ремонтов
--- Условимся, что при замене, старая деталь не считается как актив депо
-
-WITH temp_table AS (
+-- 7 Вывести общее количество по каждому депо. Упорядочить по общему количеству деталей по убыванию
 
 SELECT 
 
@@ -261,10 +258,20 @@ JOIN depot_name ON depot_detail.depot_id = depot_name.id
 
 GROUP BY depot_detail.depot_id, depot_name.depot_name
 
-ORDER BY depot_id
-  
-)
-SELECT 
+ORDER BY detail_total DESC;
 
-depot_detail.depot_id,
-depot_name.depot_name,
+-- 8 Вывести количество деталей, требующих ремонта по депо
+
+SELECT
+
+	wagon_repair.depot_id as depot_id, 
+	depot_name.depot_name as depot_name,
+	SUM(wagon_repair.detail_quantity) as detail_summ
+    
+FROM wagon_repair
+
+JOIN depot_name ON wagon_repair.depot_id = depot_name.id
+
+GROUP BY depot_id, depot_name
+
+ORDER BY detail_summ ASC;
