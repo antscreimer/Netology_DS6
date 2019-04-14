@@ -244,7 +244,7 @@ WITH temp_table AS (
  
  WHERE min_detail_qty = detail_quantity;
  
--- 7 Вывести общее количество по каждому депо. Упорядочить по общему количеству деталей по убыванию
+-- 7 Вывести общее количество деталей по каждому депо.
 
 SELECT 
 
@@ -258,7 +258,7 @@ JOIN depot_name ON depot_detail.depot_id = depot_name.id
 
 GROUP BY depot_detail.depot_id, depot_name.depot_name
 
-ORDER BY detail_total DESC;
+ORDER BY depot_id;
 
 -- 8 Вывести количество деталей, требующих ремонта по депо
 
@@ -274,4 +274,42 @@ JOIN depot_name ON wagon_repair.depot_id = depot_name.id
 
 GROUP BY depot_id, depot_name
 
-ORDER BY detail_summ ASC;
+ORDER BY depot_id;
+
+
+-- 9 Вывести остаток деталей в депо по итогам выполнения всех ремонтов
+-- Условимся, что при замене, старая деталь не считается как актив депо
+
+WITH temp_table AS (
+
+  SELECT 
+
+  depot_detail.depot_id as depot_id,
+  depot_name.depot_name as depot_name,
+  SUM(detail_quantity) as detail_total
+
+  FROM depot_detail
+
+  JOIN depot_name ON depot_detail.depot_id = depot_name.id
+
+  GROUP BY depot_detail.depot_id, depot_name.depot_name
+
+  ORDER BY depot_id
+
+)
+SELECT 
+
+temp_table.depot_id,
+temp_table.depot_name,
+temp_table.detail_total total_in_depot,
+SUM(wagon_repair.detail_quantity) as total_for_repair,
+(temp_table.detail_total - SUM(wagon_repair.detail_quantity)) as difference
+  
+FROM temp_table
+
+JOIN wagon_repair on temp_table.depot_id = wagon_repair.depot_id
+
+GROUP BY temp_table.depot_id, temp_table.depot_name, temp_table.detail_total
+                               
+ORDER BY temp_table.depot_id;                                 
+
